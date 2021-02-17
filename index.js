@@ -2,7 +2,9 @@ const http = require('http')
 const express = require('express')
 const { request, response } = require('express')
 const app = express()
+const morgan = require('morgan')
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
     {
@@ -72,7 +74,7 @@ app.post('/api/persons', (request, response) => {
     const personRequest = request.body
     if (personRequest.name && personRequest.number) {
         if (persons.find(p => p.name === personRequest.name)) {
-            response.status(400).send('Name already in use')
+            response.status(400).send({error: 'Name already in use'})
         } else {
 
 
@@ -85,7 +87,7 @@ app.post('/api/persons', (request, response) => {
             response.json(person)
         }
     } else {
-        response.status(400).send('Name or number missing')
+        response.status(400).send({error: 'Name or number missing'})
     }
 })
 
