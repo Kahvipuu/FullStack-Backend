@@ -19,7 +19,7 @@ app.get('/api/persons', (request, response) => {
 })
 
 //hmm, mongoDBn koko jostain?
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
     Person.countDocuments({})
         .then(result => {
             response.send('<p>Phonebook has info for ' + result + ' people <br> ' + new Date() + '</p>')
@@ -27,7 +27,7 @@ app.get('/info', (request, response) => {
         .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id)
         .then(p => {
             if (p) {
@@ -42,7 +42,7 @@ app.get('/api/persons/:id', (request, response) => {
         })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
         .then(r => {
             response.status(204).end()
@@ -61,7 +61,7 @@ app.delete('/api/persons/:id', (request, response) => {
     */
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const personRequest = request.body
     if (personRequest.name && personRequest.number) {
         const person = new Person({
@@ -70,9 +70,14 @@ app.post('/api/persons', (request, response) => {
             //vanha, nyt mongo hoitaa => "id": Math.floor(Math.random() * 10000)
         })
         // ?hakeeko heti mongoDBstä uuden, vai miksi toimii heti?  persons = persons.concat(person)
-        person.save().then(savedPerson => {
-            response.json(savedPerson)
-        })
+        person.save()
+            .then(savedPerson => {
+                response.json(savedPerson)
+            })
+            .catch(error => {
+                console.log('öriöri', error.message, 'mess.name', error.name);
+                next(error)
+            })
     } else {
         response.status(400).send({ error: 'Name or number missing' })
     }
@@ -100,10 +105,13 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
+    console.error('err.name', error.name, 'err.handler', error.message)
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    }
+    if (error.name === 'ValidationError') {
+        return response.status(409).send({ error: error.message })
     }
     // siirto oletus virheenkäsittelijälle
     next(error)
