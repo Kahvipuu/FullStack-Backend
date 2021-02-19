@@ -20,9 +20,11 @@ app.get('/api/persons', (request, response) => {
 
 //hmm, mongoDBn koko jostain?
 app.get('/info', (request, response) => {
-    const amount = Person.countDocuments(p => p == true)
-    const info = '<p>Phonebook has info for ' + amount + ' people <br> ' + new Date() + '</p>'
-    response.send(info)
+    Person.countDocuments({})
+        .then(result => {
+            response.send('<p>Phonebook has info for ' + result + ' people <br> ' + new Date() + '</p>')
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -62,20 +64,15 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
     const personRequest = request.body
     if (personRequest.name && personRequest.number) {
-        if (Person.find(p => p.name === personRequest.name)) {
-            response.status(400).send({ error: 'Name already in use' })
-        } else {
-            const person = new Person({
-                name: personRequest.name,
-                number: personRequest.number,
-                //vanha, nyt mongo hoitaa => "id": Math.floor(Math.random() * 10000)
-            })
-            // ?hakeeko heti mongoDBstä uuden, vai miksi toimii heti?  persons = persons.concat(person)
-            person.save().then(savedPerson => {
-                response.json(savedPerson)
-            })
-
-        }
+        const person = new Person({
+            name: personRequest.name,
+            number: personRequest.number,
+            //vanha, nyt mongo hoitaa => "id": Math.floor(Math.random() * 10000)
+        })
+        // ?hakeeko heti mongoDBstä uuden, vai miksi toimii heti?  persons = persons.concat(person)
+        person.save().then(savedPerson => {
+            response.json(savedPerson)
+        })
     } else {
         response.status(400).send({ error: 'Name or number missing' })
     }
