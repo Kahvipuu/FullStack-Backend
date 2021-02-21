@@ -5,9 +5,7 @@ const url = process.env.MONGODB_URI
 console.log('conn to', url)
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-    .then(result => {
-        console.log('MongoDB connection ok')
-    })
+    .then(console.log('MongoDB connection ok'))
     .catch((error) => {
         console.log('error, no connection to MongoDB', error.message)
     })

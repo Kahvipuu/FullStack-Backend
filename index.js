@@ -1,7 +1,5 @@
 require('dotenv').config()
-const http = require('http')
 const express = require('express')
-const { request, response } = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')

@@ -28,7 +28,7 @@ if (name && number) {
         name: name,
         number: number,
     })
-    person.save().then(response => {
+    person.save().then(() => {
         console.log('added person:', name, 'number:', number, 'to phonybook')
         mongoose.connection.close()
     })
