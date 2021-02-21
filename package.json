@@ -11,7 +11,8 @@
     "build:ui": "rm -rf build && cd ../../fullstack/osa2/puhelinluettelo && npm run build --prod && cp -r build ../../../fullstack-backend/puhelinluettelo/",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/Kahvipuu/FullStack-Backend#readme",
   "devDependencies": {
+    "eslint": "^7.20.0",
     "nodemon": "^2.0.7"
   },
   "dependencies": {

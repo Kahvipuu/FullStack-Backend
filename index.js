@@ -44,9 +44,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(r => {
-            response.status(204).end()
-        })
+        .then(response.status(204).end())
         .catch(error => next(error))
 
     /*  vanha implementointi..
@@ -75,7 +73,7 @@ app.post('/api/persons', (request, response, next) => {
                 response.json(savedPerson)
             })
             .catch(error => {
-                console.log('öriöri', error.message, 'mess.name', error.name);
+                console.log('öriöri', error.message, 'mess.name', error.name)
                 next(error)
             })
     } else {
